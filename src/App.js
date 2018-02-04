@@ -20,12 +20,19 @@ class App extends Component {
     const todoRef = rootRef.child("todos");
 
     speedRef.on("value", snap => {
-      this.setState({ speed: snap.val() });
+      const vals = snap.val();
+      if (vals) {
+        this.setState({ speed: snap.val() });
+      }
     });
 
     todoRef.on("value", snap => {
-      this.setState({ todos: snap.val() });
+      const vals = snap.val();
+      if (vals) {
+        this.setState({ todos: snap.val() });
+      }
     });
+
   }
 
   writeNewPost(title) {
