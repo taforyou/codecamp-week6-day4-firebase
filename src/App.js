@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import * as firebase from "firebase";
+import firebase from './firebase';
+
+const db = firebase.getFirestore();
 
 class App extends Component {
   constructor(props) {
@@ -10,12 +12,13 @@ class App extends Component {
     this.state = {
       speed: 10,
       listItems: ["111", "2222"],
-      todos: []
+      todos: [],
+      testName : ""
     };
   }
 
   componentDidMount() {
-    const rootRef = firebase.database().ref();
+    const rootRef = firebase.getDatabase().ref();
     const speedRef = rootRef.child("speed");
     const todoRef = rootRef.child("todos");
 
@@ -32,7 +35,21 @@ class App extends Component {
         this.setState({ todos: snap.val() });
       }
     });
+  }
 
+  
+
+  Testfirestore() {
+    db
+      .collection("users")
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          console.log(`${doc.id} => ${doc.data()}`);
+          //console.log(doc.data().name);
+          this.setState({ testName : doc.data().name});
+        });
+      });
   }
 
   writeNewPost(title) {
@@ -54,7 +71,6 @@ class App extends Component {
     // Write the new post's data simultaneously in the posts list and the user's post list.
     var updates = {};
     updates["/todos/" + newPostKey] = postData;
-    //updates['/user-posts/' + uid + '/' + newPostKey] = postData;
 
     return firebase
       .database()
@@ -76,6 +92,9 @@ class App extends Component {
         <button onClick={() => this.writeNewPost("Test112233")}>
           Test112233
         </button>
+
+        <button onClick={() => this.Testfirestore()}>firestore</button>
+        {this.state.testName}
       </div>
     );
   }
